@@ -1,0 +1,20 @@
+.Cell {
+    background: #4CAF50;
+    border: 1px solid #66BB6A;
+    transition: 0.01s linear all;
+}
+
+.Cell-apple {
+    background: #FFEB3B;
+    border-color: #66BB6A;
+}
+
+.Cell-snake {
+    background: #BF360C;
+    border-color: #D84315;
+}
+
+.Cell-snakeHead {
+    background: #B71C1C;
+    border-color: #C62828;
+}

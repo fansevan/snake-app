@@ -1,0 +1,13 @@
+.GameOver {
+    text-align: center;
+    font-size: 26px;
+}
+
+.GameOver h1 {
+    margin-top: 0;
+}
+
+.GameOver-helper {
+    margin-top: 30px;
+    font-size: 16px;
+}

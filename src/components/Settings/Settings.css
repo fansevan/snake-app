@@ -1,0 +1,24 @@
+.Settings {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Settings-header {
+    font-size: 80px;
+    font-family: Roboto, monospace;
+    margin: 0 0 40px;
+    color: #3f51b5;
+}
+
+.Settings-controls {
+    display: flex;
+    justify-content: space-around;
+    width: 350px;
+}
+
+.Settings-helper {
+    margin-top: 10px;
+}
