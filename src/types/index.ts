@@ -9,7 +9,8 @@ export interface IStoreState {
     speed: number,
     gameStage: GameStage,
     snake: ICell[],
-    apple?: ICell
+    apple?: ICell,
+    isThroughWalls: boolean
 }
 
 export enum KeyCode {

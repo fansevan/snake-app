@@ -6,6 +6,7 @@ import {generateRandomApple} from '../common';
 export const CHANGE_INPUT_VALUE = 'CHANGE_INPUT_VALUE';
 export const CHANGE_GAME_STAGE = 'CHANGE_GAME_STAGE';
 export const RECONFIGURE_FIELD = 'RECONFIGURE_FIELD';
+export const CHANGE_THROUGH_WALLS_FLAG = 'CHANGE_THROUGH_WALLS_FLAG';
 
 
 export function changeInputValue(name: string, value: string) {
@@ -36,5 +37,12 @@ export function startGame() {
 
         dispatch(reconfigureField(InitialSnake, randomApple));
         dispatch(changeGameStage(GameStage.Game));
+    };
+}
+
+export function changeThroughWallsFlag(flag: boolean) {
+    return {
+        type: CHANGE_THROUGH_WALLS_FLAG,
+        payload: flag
     };
 }

@@ -3,7 +3,8 @@ import {IStoreState, GameStage} from '../types';
 import {
     CHANGE_INPUT_VALUE,
     CHANGE_GAME_STAGE,
-    RECONFIGURE_FIELD
+    RECONFIGURE_FIELD,
+    CHANGE_THROUGH_WALLS_FLAG
 } from '../actions';
 
 export const InitialSnake = [{x: 1, y: 1}, {x: 2, y: 1}];
@@ -14,6 +15,7 @@ const initialState: IStoreState = {
     speed: 5,
     gameStage: GameStage.Menu,
     snake: InitialSnake,
+    isThroughWalls: false
 };
 
 export default function reducer(state: IStoreState = initialState, action: AnyAction): IStoreState {
@@ -39,6 +41,12 @@ export default function reducer(state: IStoreState = initialState, action: AnyAc
                 ...state,
                 snake,
                 apple
+            };
+        }
+        case CHANGE_THROUGH_WALLS_FLAG: {
+            return {
+                ...state,
+                isThroughWalls: payload
             };
         }
         default:

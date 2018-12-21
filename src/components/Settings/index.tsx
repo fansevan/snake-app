@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators, Dispatch} from 'redux';
-import {Button, FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
+import {Button, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Switch} from '@material-ui/core';
 import {withStyles} from '@material-ui/core/styles';
 import * as actions from '../../actions';
 import './Settings.css';
@@ -9,10 +9,13 @@ import './Settings.css';
 const styles = () => ({
     button: {
         display: 'flex',
-        marginTop: 60
+        marginTop: 50
     },
     formControl: {
         minWidth: 80,
+    },
+    formControlLabel: {
+        marginTop: 30
     }
 });
 
@@ -36,18 +39,20 @@ interface IStateProps {
     fieldWidth: number,
     fieldHeight: number,
     speed: number,
+    isThroughWalls: boolean
 }
 
 interface IDispatchProps {
     changeInputValue: (a: string, b: string) => void,
     startGame: () => void,
+    changeThroughWallsFlag: (flag: boolean) => void,
 }
 
 type Props = IOwnProps & IStateProps & IDispatchProps;
 
 class Settings extends React.Component<Props> {
     render() {
-        const {fieldWidth, fieldHeight, speed, classes, startGame} = this.props;
+        const {fieldWidth, fieldHeight, speed, isThroughWalls, classes, startGame} = this.props;
 
         return (
             <div className="Settings">
@@ -87,6 +92,17 @@ class Settings extends React.Component<Props> {
                         </Select>
                     </FormControl>
                 </div>
+                <FormControlLabel
+                    className={classes.formControlLabel}
+                    control={
+                        <Switch
+                            color="primary"
+                            checked={isThroughWalls}
+                            onChange={this.handleSwitchChange}
+                        />
+                    }
+                    label="Through the walls"
+                />
                 <Button
                     variant="contained"
                     color="primary"
@@ -113,14 +129,19 @@ class Settings extends React.Component<Props> {
         const {name, value}: any = e.target;
         this.props.changeInputValue(name, value);
     };
+
+    handleSwitchChange = (e: React.ChangeEvent) => {
+        const {checked}: any = e.target;
+        this.props.changeThroughWallsFlag(checked);
+    };
 }
 
-const mapStateToProps = ({fieldWidth, fieldHeight, speed}: IStateProps): IStateProps =>
-    ({fieldWidth, fieldHeight, speed});
+const mapStateToProps = ({fieldWidth, fieldHeight, speed, isThroughWalls}: IStateProps): IStateProps =>
+    ({fieldWidth, fieldHeight, speed, isThroughWalls});
 
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => {
-    const {changeInputValue, startGame} = actions;
-    return bindActionCreators({changeInputValue, startGame}, dispatch);
+    const {changeInputValue, startGame, changeThroughWallsFlag} = actions;
+    return bindActionCreators({changeInputValue, startGame, changeThroughWallsFlag}, dispatch);
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Settings));

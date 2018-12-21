@@ -12,6 +12,7 @@ interface IStateProps {
     fieldWidth: number,
     fieldHeight: number,
     speed: number,
+    isThroughWalls: number,
     snake: ICell[],
     apple: ICell,
 }
@@ -148,8 +149,33 @@ class Field extends React.Component<Props> {
             fieldHeight
         } = this.props;
 
-        const snakeHead = snake[snake.length - 1];
-        let {x, y} = snakeHead;
+        const newCell: ICell = this.getNextCell();
+
+        if (this.checkMoveValid(newCell)) {
+            let newApple: ICell | undefined;
+            let newSnake: ICell[];
+            const isAppleEaten = apple.x === newCell.x && apple.y === newCell.y;
+
+            if (isAppleEaten) {
+                if (snake.length === fieldWidth * fieldHeight - 1) {
+                    changeGameStage(GameStage.Win);
+                    return;
+                }
+                newApple = generateRandomApple(fieldWidth, fieldHeight, snake, apple);
+            }
+
+            newSnake = snake.slice(Number(!isAppleEaten)).concat(newCell);
+
+            reconfigureField(newSnake, newApple);
+        } else {
+            changeGameStage(GameStage.Loose);
+        }
+    };
+
+    getNextCell = (): ICell => {
+        const {snake, isThroughWalls, fieldWidth, fieldHeight} = this.props;
+
+        let {x, y} = snake[snake.length - 1];
 
         switch (this.direction) {
             case Direction.Up:
@@ -168,39 +194,31 @@ class Field extends React.Component<Props> {
                 break;
         }
 
-        const newCell = {x, y};
-
-        if (this.checkMoveValid(newCell)) {
-            let newApple: ICell | undefined;
-            let newSnake: ICell[];
-            const isAppleEaten = apple.x === x && apple.y === y;
-
-            if (isAppleEaten) {
-                if (snake.length === fieldWidth * fieldHeight - 1) {
-                    changeGameStage(GameStage.Win);
-                    return;
-                }
-
-                newApple = generateRandomApple(fieldWidth, fieldHeight, snake, apple);
+        if (isThroughWalls) {
+            if (x < 0) {
+                x = fieldHeight - 1;
+            } else if (x > fieldHeight - 1) {
+                x = 0;
             }
-
-            newSnake = snake.slice(Number(!isAppleEaten)).concat(newCell);
-
-            reconfigureField(newSnake, newApple);
-        } else {
-            changeGameStage(GameStage.Loose);
+            if (y < 0) {
+                y = fieldWidth - 1;
+            } else if (y > fieldWidth - 1) {
+                y = 0;
+            }
         }
+
+        return {x, y};
     };
 
     checkMoveValid = ({x, y}: ICell): boolean => {
-        const {fieldWidth, fieldHeight, snake} = this.props;
-        const isOutOfField = x < 0 || y < 0 || x > fieldHeight - 1 || y > fieldWidth - 1;
+        const {fieldWidth, fieldHeight, snake, isThroughWalls} = this.props;
+        const isOutOfField = !isThroughWalls && (x < 0 || y < 0 || x > fieldHeight - 1 || y > fieldWidth - 1);
         return !isOutOfField && !checkSnakeCell(snake, {x, y});
     };
 }
 
-const mapStateToProps = ({fieldWidth, fieldHeight, snake, apple, speed}: IStateProps): IStateProps =>
-    ({fieldWidth, fieldHeight, speed, snake, apple});
+const mapStateToProps = ({fieldWidth, fieldHeight, snake, apple, speed, isThroughWalls}: IStateProps): IStateProps =>
+    ({fieldWidth, fieldHeight, snake, apple, speed, isThroughWalls});
 
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProps => {
     const {changeGameStage, reconfigureField} = actions;
