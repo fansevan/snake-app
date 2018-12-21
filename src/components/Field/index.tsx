@@ -5,7 +5,7 @@ import './Field.css';
 import * as actions from '../../actions';
 import {ICell, KeyCode, Direction, GameStage} from '../../types';
 import Cell from './Cell';
-import {generateRandomApple, checkSnakeCell} from '../../common';
+import {generateRandomApple, checkSnakeCell, makeSortedSnake} from '../../common';
 
 
 interface IStateProps {
@@ -49,10 +49,11 @@ class Field extends React.Component<Props> {
         const {fieldWidth, fieldHeight, snake, apple: {x: appleX, y: appleY}} = this.props;
         const cells = [];
         const {x: snakeHeadX, y: snakeHeadY} = snake[snake.length - 1];
+        const sortedSnake = makeSortedSnake(snake);
 
         for (let i = 0; i < fieldHeight; i++) {
             for (let j = 0; j < fieldWidth; j++) {
-                const isSnakeCell = checkSnakeCell(snake, {x: i, y: j});
+                const isSnakeCell = checkSnakeCell(sortedSnake, {x: i, y: j});
                 const isSnakeHead = snakeHeadX === i && snakeHeadY === j;
                 const isApple = appleX === i && appleY === j;
 
@@ -213,7 +214,7 @@ class Field extends React.Component<Props> {
     checkMoveValid = ({x, y}: ICell): boolean => {
         const {fieldWidth, fieldHeight, snake, isThroughWalls} = this.props;
         const isOutOfField = !isThroughWalls && (x < 0 || y < 0 || x > fieldHeight - 1 || y > fieldWidth - 1);
-        return !isOutOfField && !checkSnakeCell(snake, {x, y});
+        return !isOutOfField && !snake.find(snakeCell => snakeCell.x === x && snakeCell.y === y);
     };
 }
 

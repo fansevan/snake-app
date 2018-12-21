@@ -3,12 +3,13 @@ import {ICell} from '../types';
 export function generateRandomApple(width: number, height: number, snake: ICell[], apple?: ICell): ICell {
     const randArray: number[][] = [];
     let arrayX = [];
+    const sortedSnake = makeSortedSnake(snake);
 
     for (let i = 0; i < height; i++) {
         randArray[i] = [];
         arrayX.push(i);
         for (let j = 0; j < width; j++) {
-            const isNotSnakeCell = !checkSnakeCell(snake, {x: i, y: j});
+            const isNotSnakeCell = !checkSnakeCell(sortedSnake, {x: i, y: j});
             const isNotApple = apple ? !(apple.x === i && apple.y === j) : true;
 
             if (isNotSnakeCell && isNotApple) {
@@ -32,12 +33,35 @@ function rand(min: number, max: number): number {
 }
 
 export function checkSnakeCell(snake: ICell[], { x, y }: ICell): boolean {
-    const { length } = snake;
-    for (let i = 0; i < length; i++) {
-        const {x: snakeCellX, y: snakeCellY} = snake[i];
-        if (snakeCellX === x && snakeCellY === y) {
+    let min = 0;
+    let max = snake.length - 1;
+    let guess: number;
+
+    while(min <= max){
+        guess = Math.floor((min + max) /2);
+
+        const { x: snakeX, y: snakeY } = snake[guess];
+
+        if (snakeX === x && snakeY === y) {
             return true;
+        } else if ((snakeX < x) || (snakeX === x && snakeY < y)) {
+            min = guess + 1;
+        } else {
+            max = guess - 1;
         }
     }
+
     return false;
+}
+
+export function makeSortedSnake(snake: ICell[]): ICell[] {
+    return [...snake].sort((a, b) => {
+        if (a.x > b.x) {
+            return 1;
+        } else if (a.x < b.x) {
+            return -1;
+        } else {
+            return a.y - b.y;
+        }
+    });
 }
